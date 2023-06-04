@@ -8,4 +8,6 @@ public interface AccountService {
     AccountEntity signUp(SignUpRequestForm requestForm);
 
     AccountEntity signIn(SignInRequestForm requestForm);
+
+    boolean isAccount(String userToken);
 }

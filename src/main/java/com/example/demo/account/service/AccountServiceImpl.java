@@ -40,5 +40,14 @@ public class AccountServiceImpl implements AccountService{
         return accountRepository.save(savedAccount);
     }
 
+    @Override
+    public boolean isAccount(String userToken) {
+        Optional<AccountEntity> maybeAccount = accountRepository.findByUserToken(userToken);
+        if(maybeAccount.isPresent()){
+            return true;
+        }
+        return false;
+    }
+
 
 }
