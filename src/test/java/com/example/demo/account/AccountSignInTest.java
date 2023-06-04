@@ -3,6 +3,7 @@ package com.example.demo.account;
 import com.example.demo.account.controller.form.SignInRequestForm;
 import com.example.demo.account.entity.AccountEntity;
 import com.example.demo.account.service.AccountService;
+import com.example.demo.account.service.RedisService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,8 @@ public class AccountSignInTest {
 
     @Autowired
     AccountService accountService;
+    @Autowired
+    RedisService redisService;
     @Test
     @DisplayName("정상적인 로그인을 시도 합니다")
     public void 정상적인_로그인() {
@@ -25,7 +28,6 @@ public class AccountSignInTest {
 
         assertEquals(savedAccount.getEmail(), EMAIL);
         assertEquals(savedAccount.getPassword(), PASSWORD);
-        System.out.println("userToken: "+savedAccount.getUserToken());
     }
 
     @Test

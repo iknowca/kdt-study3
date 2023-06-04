@@ -14,6 +14,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class AccountServiceImpl implements AccountService{
     final AccountRepository accountRepository;
+    final RedisService redisService;
     @Override
     public AccountEntity signUp(SignUpRequestForm requestForm) {
         Optional<AccountEntity> maybeAccount = accountRepository.findByEmail(requestForm.getEmail());
@@ -36,17 +37,20 @@ public class AccountServiceImpl implements AccountService{
             return null;
         }
         AccountEntity savedAccount = maybeAccount.get();
-        savedAccount.setUserToken(UUID.randomUUID().toString());
-        return accountRepository.save(savedAccount);
+
+        final String userToken = UUID.randomUUID().toString();
+        redisService.setKeyAndValue(userToken, savedAccount.getId());
+
+        return savedAccount;
     }
 
     @Override
     public boolean isAccount(String userToken) {
-        Optional<AccountEntity> maybeAccount = accountRepository.findByUserToken(userToken);
-        if(maybeAccount.isPresent()){
-            return true;
+        if(redisService.getValueByKey(userToken)==null){
+            return false;
         }
-        return false;
+        return true;
+
     }
 
 

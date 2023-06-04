@@ -24,8 +24,8 @@ spring:
   cache:
     type: redis
 
-#  redis:
-#    host: 127.0.0.1
-#    port: 6379
-#    username: default
-#    password: eddi@123
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    username: default
+    password: eddi@123
