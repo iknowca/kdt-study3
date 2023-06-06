@@ -45,13 +45,16 @@ public class AccountServiceImpl implements AccountService{
     }
 
     @Override
-    public boolean isAccount(String userToken) {
-        if(redisService.getValueByKey(userToken)==null){
-            return false;
+    public AccountEntity getByUserToken(String userToken) {
+        Long maybeAccountId = redisService.getValueByKey(userToken);
+        if(maybeAccountId==null) {
+            return null;
         }
-        return true;
-
+        Optional<AccountEntity> maybeAccount = accountRepository.findById(maybeAccountId);
+        if(maybeAccount.isEmpty()){
+            return null;
+        }
+        return maybeAccount.get();
     }
-
 
 }

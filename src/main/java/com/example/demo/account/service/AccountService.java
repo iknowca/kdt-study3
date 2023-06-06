@@ -9,5 +9,5 @@ public interface AccountService {
 
     AccountEntity signIn(SignInRequestForm requestForm);
 
-    boolean isAccount(String userToken);
+    AccountEntity getByUserToken(String userToken);
 }

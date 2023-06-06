@@ -16,7 +16,7 @@ public class ProductServiceImpl implements ProductService{
     final AccountService accountService;
     @Override
     public ProductEntity regist(ProductRegistRequestForm requestForm) {
-        if(!accountService.isAccount(requestForm.getUserToken())){
+        if(accountService.getByUserToken(requestForm.getUserToken())==null){
             return null;
         }
         return productRepository.save(requestForm.toProduct());
