@@ -1,69 +1,85 @@
-name: Deploy
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+# This workflow will build a package using Gradle and then publish it to GitHub packages when a release is created
+# For more information see: https://github.com/actions/setup-java/blob/main/docs/advanced-usage.md#Publishing-using-gradle
+
+name: Gradle Package
+
 on:
   push:
     branches:
       - main
-      
+    
 env:
-  DOCKER_IMAGE: ghcr.io/${{ github.actor }}/backend-server
+  DOCKER_IMAGE: ghcr.io/${{ github.actor }}/kdt-study3
   VERSION: ${{ github.sha }}
-  NAME: backend-server
-  
+  NAME: kdt-study3
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{github.repository}}
+
 jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v3
-      - name: Set up JDK 17
-        uses: actions/setup-java@v3
-        with:
-          java-version: '17'
-          distribution: 'zulu'
-          
-      - name: Gradle Caching
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-            
-      - name: Build with Gradle
-        run: ./gradlew build -x test
-        
-      - name: Docker build $ push to prod
-        run: |
-          docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GHCR_TOKEN }}
-          docker buildx create --name arm64builder --use
-          docker buildx build --platform linux/amd64,linux/arm64 -f Dockerfile -t ghcr.io/iknowca/kdt-study3:latest --push .
-          docker logout
-          
+    - uses: actions/checkout@v3
+    - name: Set up JDK 17
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'zulu'
+
+    - name: Gradle Caching
+      uses: actions/cache@v3
+      with:
+        path: |
+          ~/.gradle/caches
+          ~/.gradle/wrapper
+        key: ${{runner.os}}-gradle-${{hashFiles('**/*.gradle*', '**/gradle-wrapper.properties')}}
+        restore-keys: |
+          ${{runner.os}}-gradle-
+    - name: chmod
+      run: chmod +x gradlew
+    
+    - name: Build with Gradle
+      run: ./gradlew build -x test
+      
+    - name: Docker build & push to prod
+      run: |
+        docker login ghcr.io -u ${{github.actor}} -p ${{secrets.GHCR_TOKEN}}
+        docker buildx create --name arm64builder --use
+        docker buildx build --platform linux/amd64,linux/arm64 -f Dockerfile -t ghcr.io/iknowca/kdt-study3:latest --push .
+        docker logout
+    
+    # The USERNAME and TOKEN need to correspond to the credentials environment variables used in
+    # the publishing section of your build.gradle
   deploy:
     needs: build
     name: Deploy
     runs-on: [self-hosted, deploy-backend]
     steps:
-      - name: Login to ghcr
+      - name: login to ghcr
         uses: docker/login-action@v1
         with:
           registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GHCR_TOKEN }}
-          
+          username: ${{github.actor}}
+          password: ${{secrets.GHCR_TOKEN}}
+
+        
       - name: Deploy to prod
         uses: appleboy/ssh-action@v0.1.10
         with:
-          host: ${{ secrets.HOST_PROD }}
+          host: ${{secrets.HOST_PROD}}
           username: ec2-user
-          key: ${{ secrets.PRIVATE_KEY }}
+          key: ${{secrets.PRIVATE_KEY}}
           script_stop: true
           script: |
             pwd
             ls -al
-            cd actions-runner-back
+            cd actions-runner
             pwd
             if [[ "$(docker ps -q --filter ancestor=mysql:8.0)" ]]; then
               docker rm -f $(docker ps -qa --filter ancestor=mysql:8.0)
@@ -73,26 +89,38 @@ jobs:
             if [[ "$(docker ps -qa --filter ancestor=backend-deploy-test/kdt-study3:latest)" ]]; then
               docker rm -f $(docker ps -qa --filter ancestor=backend-deploy-test/kdt-study3:latest)
             fi
+            echo "pass backend-deploy-test/kdt-study3:latest"
             
-            echo "pass backend docker-container"
-            
-            echo ${{ secrets.GHCR_TOKEN }} | docker login ghcr.io -u ${{ github.repository_owner }} --password-stdin
+            echo ${{ secrets.GHCR_TOKEN}} | docker login ghcr.io -u ${{ github.repository_owner }} --password-stdin
             docker pull ghcr.io/iknowca/kdt-study3:latest
-            echo ${{github.repository_owner }}
+            
             docker image prune -f
             docker logout
-            
-            docker-compose up -d
-              
-              
-              
-              
-              
-              
-              
-              
-              
-              
-              
-              
-              
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+Create README.md · iknowca/cicdtest@571af4e 
