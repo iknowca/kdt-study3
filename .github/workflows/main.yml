@@ -96,31 +96,3 @@ jobs:
             
             docker image prune -f
             docker logout
-          
-          
-          
-          
-          
-          
-          
-          
-          
-          
-          
-          
-          
-          
-          
-          
-          
-          
-          
-          
-          
-          
-          
-          
-          
-          
-          
-Create README.md · iknowca/cicdtest@571af4e 
