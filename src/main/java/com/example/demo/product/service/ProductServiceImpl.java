@@ -22,4 +22,13 @@ public class ProductServiceImpl implements ProductService{
         return productRepository.save(requestForm.toProduct());
 
     }
+
+    @Override
+    public ProductEntity getByProductId(Long productId) {
+        Optional<ProductEntity> maybeProduct = productRepository.findById(productId);
+        if(maybeProduct.isEmpty()) {
+            return null;
+        }
+        return maybeProduct.get();
+    }
 }
