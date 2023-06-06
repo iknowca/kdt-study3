@@ -59,27 +59,30 @@ jobs:
           host: ${{ secrets.HOST_PROD }}
           username: ec2-user
           key: ${{ secrets.PRIVATE_KEY }}
-          script_stop: ture
+          script_stop: true
           script: |
             pwd
             ls -al
-            cd actions-runner
+            cd actions-runner-back
             pwd
             if [[ "$(docker ps -q --filter ancestor=mysql:8.0)" ]]; then
               docker rm -f $(docker ps -qa --filter ancestor=mysql:8.0)
             fi
             
             echo "pass mysql-container"
-            if [[ "$(docker ps -qa --filter ancestor=backend-deploy-test/kdt-study3: latest)" ]]; then
+            if [[ "$(docker ps -qa --filter ancestor=backend-deploy-test/kdt-study3:latest)" ]]; then
               docker rm -f $(docker ps -qa --filter ancestor=backend-deploy-test/kdt-study3:latest)
             fi
             
             echo "pass backend docker-container"
             
-            docker login ghcr.io -u ${{ github.actor }} -p ${{secrets.GHCR_TOKEN}}
-            
+            echo ${{ secrets.GHCR_TOKEN }} | docker login ghcr.io -u ${{ github.repository_owner }} --password-stdin
+            docker pull ghcr.io/iknowca/kdt-study3:latest
+            echo ${{github.repository_owner }}
             docker image prune -f
             docker logout
+            
+            docker-compose up -d
               
               
               
