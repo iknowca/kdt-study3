@@ -59,7 +59,7 @@ jobs:
           host: ${{ secrets.HOST_PROD }}
           username: ec2-user
           key: ${{ secrets.PRIVATE_KEY }}
-          script_stop: ture
+          script_stop: true
           script: |
             pwd
             ls -al
