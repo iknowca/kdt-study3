@@ -79,7 +79,7 @@ jobs:
           script: |
             pwd
             ls -al
-            cd actions-runner
+            cd actions-runner-back
             pwd
             if [[ "$(docker ps -q --filter ancestor=mysql:8.0)" ]]; then
               docker rm -f $(docker ps -qa --filter ancestor=mysql:8.0)
